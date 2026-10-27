@@ -1,0 +1,1104 @@
+# PROJECT TITLE
+AI-Powered Multimodal Construction Intelligence Platform
+
+## 1. ROLE AND OBJECTIVE
+
+Act as a senior full-stack software engineer, AI/ML engineer, UI/UX designer, and construction technology specialist.
+
+Build a complete, modern, production-oriented full-stack web application called **AI-Powered Multimodal Construction Intelligence Platform**.
+
+The application must help construction engineers, site supervisors, project managers, contractors, safety officers, and real estate professionals make informed decisions using artificial intelligence.
+
+The system must accept and analyze:
+- Textual user inputs.
+- Construction site photographs.
+- Project-related structured data.
+- Weather information.
+- Construction planning and monitoring information.
+
+Use a multimodal large language model to generate context-aware insights and actionable recommendations.
+
+Do not build only a static landing page or a UI prototype. Build a functional application with a frontend, backend API, AI integration, validation, error handling, and persistent storage.
+
+If a capability requires an external service or API key, implement the integration point and provide a working fallback or clearly explain what configuration is required.
+
+---
+
+## 2. TECHNOLOGY STACK
+
+### Frontend
+- React.js.
+- TypeScript.
+- Vite.
+- Tailwind CSS.
+- React Router for navigation.
+- Lucide React for icons.
+- Recharts for analytics and visualizations.
+- Axios for API communication.
+- React Hook Form for form management.
+- Zod for input validation.
+
+### Backend
+- Python 3.11 or newer.
+- FastAPI.
+- Pydantic for request and response validation.
+- Uvicorn as the ASGI server.
+- SQLAlchemy for database access.
+- SQLite for local development, with an architecture that supports PostgreSQL.
+- Python multipart support for image uploads.
+
+### AI
+Use Google's Gemini API through the official Python SDK, google-genai.
+
+Use a currently supported Gemini model with multimodal image and text capabilities. Make the model configurable through environment variables rather than hardcoding a model identifier.
+
+The AI must analyze construction-related text, images, and structured project information.
+
+### External integrations
+- Weather API integration through a configurable provider.
+- Optional mapping integration.
+- Optional construction material pricing integration.
+
+### Configuration
+Use environment variables for API keys, database settings, backend URLs, and model selection.
+
+Never expose private API keys in frontend code.
+
+---
+
+## 3. APPLICATION DESIGN
+
+Create a premium, professional construction intelligence dashboard.
+
+### Visual style
+- Modern enterprise SaaS interface.
+- White and light-gray backgrounds.
+- Deep navy blue for primary navigation.
+- Construction orange for important actions and warnings.
+- Green for safe or successful states.
+- Red for critical alerts.
+- Rounded cards with subtle shadows.
+- Clean typography.
+- Consistent spacing and alignment.
+- Professional charts, tables, badges, and status indicators.
+
+### Layout
+Create a responsive application with:
+1. A collapsible left sidebar.
+2. A top navigation bar.
+3. A main dashboard workspace.
+4. Notification and user-profile controls.
+5. Responsive layouts for desktop, tablet, and mobile.
+
+The sidebar must include:
+- Dashboard.
+- Site Safety AI.
+- Crack Detection.
+- Project Planning.
+- Real Estate Valuation.
+- Daily Site Assistant.
+- Weather Advisory.
+- Construction Knowledge Base.
+- Project Management.
+- Reports.
+- Settings.
+
+Use a consistent application shell across all modules.
+
+---
+
+## 4. DASHBOARD
+
+Create an interactive overview dashboard displaying:
+
+### Summary cards
+- Active Projects.
+- Safety Issues Detected.
+- Crack Inspections Completed.
+- Tasks In Progress.
+- Weather Alerts.
+- Pending Site Reports.
+
+### Analytics
+- Project progress chart.
+- Safety incidents by category.
+- Weekly inspection activity.
+- Task completion statistics.
+- Project status distribution.
+
+### Recent activity
+Display a chronological activity feed showing:
+- Site inspections.
+- AI image analyses.
+- Safety alerts.
+- Project updates.
+- Task assignments.
+- Weather warnings.
+
+### Project overview
+Create a table containing:
+- Project name.
+- Site location.
+- Project manager.
+- Completion percentage.
+- Start date.
+- Target completion date.
+- Current status.
+
+Include search, filtering, sorting, and pagination where appropriate.
+
+Use clearly labeled demo data for the initial experience. Do not present demo data as verified real-world information.
+
+---
+
+## 5. MODULE 1: AI CONSTRUCTION SITE SAFETY MONITORING
+
+Build an AI-powered site safety analysis module.
+
+### User interface
+Provide:
+- Image upload with drag-and-drop.
+- Image preview.
+- Project and site selection.
+- Optional text description.
+- Analysis button.
+- Loading indicator.
+- Results dashboard.
+
+### AI analysis
+When a construction image is submitted, analyze visible conditions for potential safety concerns such as:
+- Missing or apparently inadequate personal protective equipment.
+- Unsafe working at heights.
+- Potential fall hazards.
+- Poor housekeeping.
+- Potentially unsafe equipment positioning.
+- Blocked access routes.
+- Visible barricading deficiencies.
+- Potential electrical hazards.
+- Improper material storage.
+
+### Results
+Display:
+- Identified potential hazards.
+- Hazard category.
+- Severity: Low, Medium, High, or Critical.
+- Visual evidence and image locations when identifiable.
+- Recommended corrective actions.
+- Suggested priority.
+- Follow-up inspection recommendations.
+- Analysis confidence or uncertainty.
+
+Return a structured JSON response.
+
+Example:
+
+{
+  "module": "site_safety",
+  "summary": "Potential fall hazard observed near an elevated work area.",
+  "hazards": [
+    {
+      "category": "fall_hazard",
+      "severity": "high",
+      "description": "The visible elevated work area may have inadequate edge protection.",
+      "evidence": "An exposed edge is visible in the submitted image.",
+      "recommended_action": "Restrict access and have a qualified safety officer verify compliant edge protection before work continues.",
+      "confidence": 0.84
+    }
+  ],
+  "limitations": [
+    "Only conditions visible in the submitted image were assessed."
+  ]
+}
+
+The numbers above are examples, not actual model measurements.
+
+### Safety requirements
+- Do not claim that the image analysis guarantees site safety.
+- Do not infer invisible conditions.
+- Flag uncertain observations for human inspection.
+- Treat critical potential hazards cautiously and recommend immediate assessment by qualified site personnel.
+- Never represent the AI as a replacement for professional safety inspections.
+
+Allow users to save reports, review historical analyses, and mark corrective actions as pending or completed.
+
+---
+
+## 6. MODULE 2: AI CRACK DETECTION AND ANALYSIS
+
+Create an image-based crack inspection module for concrete and masonry surfaces.
+
+### Input
+- Upload one or more images.
+- Select material type.
+- Enter structure type.
+- Enter approximate structure age if known.
+- Enter observed symptoms or inspection notes.
+- Optionally provide a scale reference.
+
+### Analysis
+The AI should identify visible potential cracks and distinguish between:
+- Hairline-looking cracks.
+- Linear cracks.
+- Branching cracks.
+- Horizontal cracks.
+- Vertical cracks.
+- Diagonal cracks.
+- Multiple visible cracks.
+- Other visible surface damage.
+
+Where possible, return:
+- Approximate crack location in the image.
+- Bounding boxes or normalized coordinates.
+- Visual characteristics.
+- Approximate visible length only if a reliable scale reference is available.
+- Whether the image supports a meaningful severity estimate.
+- Recommended inspection steps.
+
+### Results UI
+Display:
+- Original image.
+- Annotated image when image localization is available.
+- Detected regions.
+- Crack classification.
+- Visual severity category.
+- Observations.
+- Suggested next steps.
+- Inspection report download option.
+
+### Important limitations
+Do not claim precise crack width, depth, structural integrity, or remaining service life from an ordinary photograph.
+
+If no physical scale reference exists, clearly state that dimensions cannot be reliably measured.
+
+Do not claim that a crack is structurally safe or unsafe solely from an image. Recommend inspection by a qualified structural engineer when warranted.
+
+---
+
+## 7. MODULE 3: AI REAL ESTATE VALUATION
+
+Create an intelligent real estate valuation interface.
+
+### Input fields
+- Property type.
+- Location.
+- Land area.
+- Built-up area.
+- Number of floors.
+- Number of bedrooms, where applicable.
+- Building age.
+- Construction quality.
+- Property condition.
+- Amenities.
+- Road access.
+- Available market comparables.
+- Currency.
+
+### Analysis
+Use available property data and comparable transactions when provided.
+
+Estimate:
+- Indicative property value range.
+- Estimated price per unit area.
+- Land value and building value, where the available data supports this separation.
+- Factors that may increase or decrease value.
+- Data completeness.
+- Confidence level.
+- Suggested additional information.
+
+### Results
+Show:
+- Estimated low-end value.
+- Estimated high-end value.
+- Indicative midpoint.
+- Price per square foot or square meter.
+- Factors affecting valuation.
+- Comparable property table when actual comparable data is available.
+
+### Rules
+- Clearly label results as AI-generated estimates, not certified appraisals.
+- Do not fabricate recent transactions or live market prices.
+- If market data is unavailable, use a transparent illustrative estimate only when appropriate, clearly labeled as such.
+- Ask for missing information when necessary.
+- Make currency and measurement units configurable.
+
+---
+
+## 8. MODULE 4: AI CONSTRUCTION PROJECT PLANNING
+
+Build an intelligent construction planning assistant.
+
+### Inputs
+- Project name.
+- Project type.
+- Project description.
+- Site area.
+- Number of floors.
+- Planned start date.
+- Target completion date.
+- Budget.
+- Available workforce.
+- Project constraints.
+- Material availability.
+- Weather considerations.
+
+### Generate
+- Work breakdown structure.
+- Major project phases.
+- Task list.
+- Suggested task durations.
+- Dependencies.
+- Suggested resource allocation.
+- Material requirements when sufficient information exists.
+- Milestones.
+- Risk register.
+- Suggested contingency measures.
+
+Typical project phases may include:
+1. Site preparation.
+2. Excavation.
+3. Foundation.
+4. Structural construction.
+5. Masonry.
+6. Electrical and plumbing rough-in.
+7. Finishing.
+8. Quality inspection.
+9. Handover.
+
+Adapt the phases to the project type rather than always using this fixed list.
+
+### Interactive planning interface
+Provide:
+- Editable task table.
+- Task status controls.
+- Start and end dates.
+- Dependency management.
+- Priority levels.
+- Progress indicators.
+- Timeline or Gantt-style visualization.
+- Project progress charts.
+
+### Rules
+- Clearly distinguish AI-suggested durations from validated construction schedules.
+- Account for dependencies when calculating dates.
+- Identify overlapping tasks and unrealistic deadlines.
+- Do not claim that the plan is code-compliant without verification.
+- Allow project managers to edit and approve generated plans.
+
+Persist approved plans and subsequent updates in the database.
+
+---
+
+## 9. MODULE 5: DAILY SITE ASSISTANT
+
+Build a conversational AI assistant designed for daily construction operations.
+
+### Interface
+Create a chat interface with:
+- Message history.
+- User input.
+- Send button.
+- Loading indicator.
+- Suggested prompts.
+- Clear conversation control.
+- Copy response button.
+
+### Capabilities
+Answer questions about:
+- Daily construction activities.
+- Work sequencing.
+- Site documentation.
+- Material calculations.
+- Concrete quantity calculations.
+- Brickwork estimates.
+- Basic cost estimation.
+- Workforce coordination.
+- Inspection preparation.
+- Quality-control checklists.
+- Construction terminology.
+- Project task dependencies.
+
+### Context
+Allow users to select a project so the assistant can use its authorized project information.
+
+Support structured context containing:
+- Project details.
+- Approved schedules.
+- Task status.
+- Inspection history.
+- User-provided site notes.
+
+### Rules
+- Show formulas, units, assumptions, and calculation steps for numerical estimates.
+- Request missing dimensions rather than inventing them.
+- Distinguish standard engineering principles from jurisdiction-specific requirements.
+- Recommend qualified professional review for safety-critical or structural decisions.
+
+---
+
+## 10. MODULE 6: WEATHER-AWARE CONSTRUCTION ADVISORY
+
+Build a weather-aware planning module.
+
+### Features
+- Site location input.
+- Forecast retrieval through a configured weather provider.
+- Current conditions when available.
+- Forecast summaries.
+- Rain probability.
+- Temperature.
+- Wind conditions.
+- Weather-related activity recommendations.
+
+### Activities to assess
+- Concrete pouring.
+- Excavation.
+- Roofing.
+- Scaffolding work.
+- Crane operations.
+- Exterior painting.
+- Material handling.
+
+### Advisory output
+For each activity, show:
+- Weather condition.
+- Potential impact.
+- Suggested precaution.
+- Recommended review action.
+- Forecast time range.
+- Data timestamp.
+
+### Rules
+- Use live weather data only when a valid provider is configured.
+- Display a clear message if the API is unavailable.
+- Never invent forecasts.
+- Distinguish official weather warnings from AI-generated recommendations.
+- Use applicable equipment manuals, project specifications, and site safety procedures when evaluating operational limits.
+
+---
+
+## 11. MODULE 7: CONSTRUCTION KNOWLEDGE ASSISTANT
+
+Create a construction knowledge interface where users can ask questions in natural language.
+
+Support:
+- Building materials.
+- Concrete and mortar.
+- Reinforcement.
+- Masonry.
+- Waterproofing.
+- Building finishes.
+- Construction terminology.
+- Quantity estimation.
+- General quality-control practices.
+- Building code concepts.
+- Site inspection preparation.
+
+Provide answers with:
+- Clear explanations.
+- Step-by-step calculations where applicable.
+- Assumptions.
+- Units.
+- Practical examples.
+- Relevant source references when available.
+
+If a user uploads construction documents, allow the system to extract relevant information and answer questions using the uploaded content.
+
+Do not fabricate code clauses, standards, citations, or document references.
+
+Where a question depends on local building regulations, ask for the relevant jurisdiction or clearly identify the limits of the answer.
+
+---
+
+## 12. MODULE 8: PROJECT MANAGEMENT
+
+Create a project management workspace.
+
+### Project creation
+Users can create projects with:
+- Name.
+- Description.
+- Location.
+- Client.
+- Project manager.
+- Budget.
+- Start date.
+- Target completion date.
+- Status.
+
+### Project details
+Each project should have:
+- Overview.
+- Tasks.
+- Team members.
+- Safety reports.
+- Crack inspections.
+- Daily logs.
+- Documents.
+- Weather advisories.
+- AI-generated reports.
+
+### Operations
+Implement:
+- Create, read, update, and delete operations where appropriate.
+- Search and filtering.
+- Task assignments.
+- Status updates.
+- Activity history.
+- Project-specific AI context.
+
+Validate all user inputs.
+
+Use appropriate ownership checks so users cannot access projects that they are not authorized to view.
+
+---
+
+## 13. MODULE 9: REPORTS AND EXPORTS
+
+Create a centralized reporting module.
+
+Users should be able to generate and download reports for:
+- Safety inspections.
+- Crack inspections.
+- Project progress.
+- Daily site activities.
+- Construction planning.
+- Weather advisories.
+- Real estate valuation.
+
+Include:
+- Report title.
+- Project information.
+- Generation date.
+- User-entered details.
+- AI-generated findings.
+- Recommendations.
+- Limitations.
+- Review status.
+
+Provide PDF and CSV export where appropriate.
+
+For image analysis reports, include the submitted image when appropriate and ensure the report does not claim greater accuracy than the underlying analysis supports.
+
+---
+
+## 14. BACKEND API ARCHITECTURE
+
+Create a modular FastAPI backend.
+
+Use this suggested structure:
+
+backend/
+    app/
+        main.py
+        config.py
+        database.py
+        dependencies.py
+        models/
+            project.py
+            task.py
+            inspection.py
+            report.py
+            user.py
+        schemas/
+            project.py
+            task.py
+            safety.py
+            crack.py
+            valuation.py
+            planning.py
+            assistant.py
+            weather.py
+        routers/
+            projects.py
+            tasks.py
+            safety.py
+            crack_detection.py
+            valuation.py
+            planning.py
+            assistant.py
+            weather.py
+            knowledge.py
+            reports.py
+        services/
+            gemini_service.py
+            safety_service.py
+            crack_service.py
+            valuation_service.py
+            planning_service.py
+            weather_service.py
+            report_service.py
+        utils/
+            image_validation.py
+            json_parser.py
+            calculations.py
+    tests/
+    requirements.txt
+    .env.example
+    Dockerfile
+
+Adapt this structure as needed, but maintain clear separation between API routes, business logic, database models, and AI integrations.
+
+### API endpoints
+
+Implement endpoints similar to:
+
+GET    /api/health
+
+GET    /api/dashboard/summary
+
+GET    /api/projects
+POST   /api/projects
+GET    /api/projects/{project_id}
+PATCH  /api/projects/{project_id}
+DELETE /api/projects/{project_id}
+
+GET    /api/projects/{project_id}/tasks
+POST   /api/projects/{project_id}/tasks
+PATCH  /api/tasks/{task_id}
+
+POST   /api/ai/safety/analyze
+POST   /api/ai/cracks/analyze
+POST   /api/ai/valuation/estimate
+POST   /api/ai/planning/generate
+POST   /api/ai/assistant/chat
+POST   /api/ai/knowledge/ask
+
+GET    /api/weather/forecast
+POST   /api/ai/weather/advisory
+
+GET    /api/reports
+POST   /api/reports
+GET    /api/reports/{report_id}
+GET    /api/reports/{report_id}/download
+
+Use correct HTTP methods, status codes, validation, and error handling.
+
+For file uploads, use multipart/form-data.
+
+For structured requests and responses, use validated Pydantic models.
+
+Expose interactive API documentation through FastAPI's Swagger UI.
+
+---
+
+## 15. STRICT JSON CONTRACTS
+
+All AI modules must return structured data conforming to predefined Pydantic schemas.
+
+Never assume that an LLM always produces valid JSON.
+
+Implement:
+- JSON parsing.
+- Schema validation.
+- Safe handling of missing fields.
+- Limited retries for malformed model output.
+- Explicit error responses.
+- Logging without exposing secrets.
+- Graceful handling of AI provider errors.
+
+Example safety response:
+
+{
+  "success": true,
+  "data": {
+    "module": "site_safety",
+    "summary": "Potential hazards were identified.",
+    "hazards": [],
+    "limitations": []
+  },
+  "error": null
+}
+
+Example error response:
+
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "AI_PROVIDER_UNAVAILABLE",
+    "message": "AI analysis is temporarily unavailable."
+  }
+}
+
+Define stable response contracts for every endpoint and document them.
+
+The frontend must handle success, empty results, validation errors, network errors, timeouts, and unavailable AI services.
+
+Do not return fake successful AI analyses when a model request fails.
+
+---
+
+## 16. MULTIMODAL AI IMPLEMENTATION
+
+Implement a reusable Gemini service.
+
+Responsibilities:
+1. Accept text prompts.
+2. Accept validated image inputs.
+3. Accept relevant structured project context.
+4. Send multimodal requests to Gemini.
+5. Request schema-constrained or JSON-formatted outputs where supported.
+6. Validate the returned response.
+7. Normalize results into application schemas.
+8. Return structured errors when analysis fails.
+
+For image inputs:
+- Validate file type.
+- Limit file size.
+- Reject empty or invalid files.
+- Avoid trusting filenames or MIME types alone.
+- Handle unsupported image formats safely.
+- Do not execute uploaded content.
+- Avoid unnecessary storage of original images.
+
+Keep the model ID configurable.
+
+Use the current official Google Gen AI SDK and follow its supported API conventions.
+
+Store the API key exclusively in the backend environment.
+
+Example environment configuration:
+
+GEMINI_API_KEY=your_api_key_here
+GEMINI_MODEL=your_supported_gemini_model
+DATABASE_URL=sqlite:///./construction.db
+FRONTEND_ORIGIN=http://localhost:5173
+WEATHER_API_KEY=
+WEATHER_PROVIDER=
+
+Provide an `.env.example` file with placeholders only.
+
+---
+
+## 17. DATABASE DESIGN
+
+Create database models for:
+
+### Projects
+- id.
+- name.
+- description.
+- location.
+- client.
+- manager.
+- budget.
+- start_date.
+- target_completion_date.
+- status.
+- created_at.
+- updated_at.
+
+### Tasks
+- id.
+- project_id.
+- title.
+- description.
+- priority.
+- status.
+- start_date.
+- end_date.
+- progress.
+- dependencies.
+- created_at.
+- updated_at.
+
+### Inspections
+- id.
+- project_id.
+- inspection_type.
+- image_reference.
+- input_data.
+- findings.
+- recommendations.
+- review_status.
+- created_at.
+
+### Reports
+- id.
+- project_id.
+- report_type.
+- title.
+- report_data.
+- file_reference.
+- created_at.
+
+### Daily Logs
+- id.
+- project_id.
+- log_date.
+- weather_summary.
+- work_completed.
+- workforce_summary.
+- issues.
+- created_at.
+
+Add appropriate relationships, indexes, constraints, and migration support.
+
+Avoid storing large binary images directly in database records unless explicitly justified.
+
+---
+
+## 18. FRONTEND STRUCTURE
+
+Use this suggested structure:
+
+frontend/
+    src/
+        app/
+            App.tsx
+            router.tsx
+        components/
+            layout/
+                Sidebar.tsx
+                Header.tsx
+                PageContainer.tsx
+            ui/
+                Button.tsx
+                Card.tsx
+                Modal.tsx
+                DataTable.tsx
+                FileUploader.tsx
+                StatusBadge.tsx
+                LoadingState.tsx
+                ErrorState.tsx
+        pages/
+            Dashboard.tsx
+            SafetyAnalysis.tsx
+            CrackDetection.tsx
+            RealEstateValuation.tsx
+            ProjectPlanning.tsx
+            DailyAssistant.tsx
+            WeatherAdvisory.tsx
+            KnowledgeBase.tsx
+            Projects.tsx
+            ProjectDetails.tsx
+            Reports.tsx
+            Settings.tsx
+        services/
+            api.ts
+            projects.ts
+            ai.ts
+            weather.ts
+            reports.ts
+        types/
+            api.ts
+            project.ts
+            inspection.ts
+        hooks/
+        utils/
+        styles/
+
+Implement reusable components and strongly typed API interfaces.
+
+Create functional navigation, forms, data tables, charts, image uploads, analysis results, and notifications.
+
+Do not make every navigation item lead to the same placeholder page.
+
+---
+
+## 19. SECURITY AND RELIABILITY
+
+Implement the following protections:
+- Server-side input validation.
+- Image upload limits.
+- File type verification.
+- Safe file handling.
+- API key protection.
+- CORS configuration.
+- Database transactions.
+- Request timeouts.
+- AI response validation.
+- Error handling.
+- Rate limiting for expensive AI endpoints.
+- Access control architecture.
+- Safe logging.
+- Environment-based configuration.
+
+If authentication is implemented, use a secure authentication method and password hashing where applicable.
+
+Do not store passwords in plaintext.
+
+Do not expose sensitive project information across user or project boundaries.
+
+Treat uploaded images and documents as untrusted input.
+
+Protect against prompt injection in user-supplied documents and images. Treat their contents as data to analyze, not as instructions that override system rules.
+
+---
+
+## 20. TESTING
+
+Create automated tests for:
+- Health endpoint.
+- Project CRUD operations.
+- Task updates.
+- Pydantic validation.
+- Invalid image uploads.
+- AI provider failures.
+- Malformed AI JSON.
+- Missing environment variables.
+- Database operations.
+- Frontend loading states.
+- Frontend error states.
+- API integration.
+
+Use pytest for backend tests.
+
+Use Vitest and React Testing Library for frontend tests.
+
+Mock external AI and weather APIs in automated tests.
+
+Ensure the application can start and run its tests without requiring paid external services when the corresponding integrations are mocked.
+
+---
+
+## 21. DEMO MODE
+
+Create a clearly labeled demo mode.
+
+Demo mode should:
+- Populate sample construction projects.
+- Populate example tasks and reports.
+- Display representative dashboard analytics.
+- Allow users to explore the interface without external API keys.
+- Clearly label example records as demo data.
+
+AI-dependent features must not pretend to have performed real analysis in demo mode.
+
+If the Gemini API is not configured, show a clear setup message and provide an option to explore example output.
+
+---
+
+## 22. DOCUMENTATION AND EXECUTION
+
+Generate:
+- Complete frontend source code.
+- Complete backend source code.
+- requirements.txt.
+- package.json.
+- .env.example.
+- Database initialization code or migrations.
+- Automated tests.
+- README.md.
+- API documentation.
+- Dockerfiles.
+- Optional Docker Compose configuration.
+
+The README must explain:
+1. Prerequisites.
+2. Project structure.
+3. Installing dependencies.
+4. Obtaining a Gemini API key.
+5. Configuring environment variables.
+6. Starting the backend.
+7. Starting the frontend.
+8. Running database migrations or initialization.
+9. Running tests.
+10. Troubleshooting common errors.
+11. Deploying the application.
+
+Use separate terminal instructions for frontend and backend.
+
+Typical development commands:
+
+Backend:
+
+cd backend
+python -m venv .venv
+
+Activate the virtual environment, then run:
+
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
+
+Frontend:
+
+cd frontend
+npm install
+npm run dev
+
+Configure the frontend API base URL to point to the FastAPI backend.
+
+These commands should match the actual generated project structure.
+
+---
+
+## 23. IMPLEMENTATION STRATEGY
+
+Build the application in working stages.
+
+Stage 1:
+Create the frontend application shell, sidebar, header, routing, dashboard, and responsive design.
+
+Stage 2:
+Create the FastAPI backend, database models, schemas, and project/task CRUD APIs.
+
+Stage 3:
+Implement the Gemini integration and structured JSON validation.
+
+Stage 4:
+Implement construction safety image analysis and crack detection.
+
+Stage 5:
+Implement real estate valuation and project planning.
+
+Stage 6:
+Implement the daily site assistant, knowledge assistant, and weather advisory.
+
+Stage 7:
+Implement reports, exports, and project history.
+
+Stage 8:
+Implement security controls, testing, documentation, and deployment configuration.
+
+At every stage:
+- Generate complete files, not isolated fragments.
+- Ensure imports and dependencies are correct.
+- Connect the frontend to actual backend endpoints.
+- Resolve errors before continuing.
+- Avoid unnecessary duplication.
+- Maintain consistent API contracts.
+- Explain any required manual configuration.
+
+If the entire project cannot be generated in one response, start with a functional vertical slice and continue module by module without replacing working files unnecessarily.
+
+---
+
+## 24. FINAL ACCEPTANCE CRITERIA
+
+The project is complete only when:
+
+1. The frontend starts successfully.
+2. The FastAPI backend starts successfully.
+3. The dashboard displays data from the backend.
+4. Projects and tasks can be created and updated.
+5. The safety module accepts and validates image uploads.
+6. The crack detection module accepts and validates image uploads.
+7. Configured Gemini integration returns validated structured responses.
+8. AI provider failures are handled correctly.
+9. Planning results can be reviewed and edited.
+10. Valuation results disclose their assumptions and limitations.
+11. Weather advisories use actual forecast data when configured.
+12. Reports can be generated and exported.
+13. Data persists across application restarts.
+14. The UI works on desktop and mobile.
+15. Setup and execution instructions are documented.
+16. Automated tests cover critical application behavior.
+17. No API keys or secrets are committed to the repository.
+18. Demo data is clearly distinguished from real analysis.
+19. No critical construction safety or structural decision is presented as guaranteed by AI.
+20. The application has a consistent, polished, professional user experience.
+
+## FINAL INSTRUCTION
+
+Begin implementing the project now.
+
+First, inspect the available development environment and determine which files and capabilities can actually be created or executed.
+
+Then create the complete application in the available workspace.
+
+Prioritize a working end-to-end application over a superficial visual mockup.
+
+Do not stop after producing a project plan or sample code. Generate the actual files, connect the modules, validate the implementation, and provide exact instructions for running the application.
+
+If a capability cannot be completed in the current environment, explain the limitation and implement the most useful working alternative without pretending that the missing capability is functional.

@@ -1,0 +1,6 @@
+{
+  "name": "AI-Powered Multimodal Construction Intelligence Platform",
+  "description": "Enterprise multimodal AI platform for site safety monitoring, crack inspection, project planning, real estate valuation, and weather-aware construction operations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

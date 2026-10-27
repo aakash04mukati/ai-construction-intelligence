@@ -1,0 +1,403 @@
+import fs from "fs";
+import path from "path";
+
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  location: string;
+  client: string;
+  manager: string;
+  budget: number;
+  startDate: string;
+  targetCompletionDate: string;
+  status: "Active" | "Delayed" | "Under Review" | "Completed";
+  progress: number;
+  siteArea: string;
+  floors: number;
+  projectType: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Task {
+  id: string;
+  projectId: string;
+  title: string;
+  description: string;
+  priority: "Low" | "Medium" | "High" | "Critical";
+  status: "Not Started" | "In Progress" | "Under Review" | "Completed";
+  startDate: string;
+  endDate: string;
+  progress: number;
+  dependencies: string[];
+  assignedTo: string;
+  phase: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Inspection {
+  id: string;
+  projectId: string;
+  projectName?: string;
+  inspectionType: "safety" | "crack";
+  imageReference?: string;
+  inputData: Record<string, any>;
+  findings: Record<string, any>;
+  recommendations: string[];
+  severity: "Low" | "Medium" | "High" | "Critical";
+  reviewStatus: "Pending Review" | "Verified" | "Action Taken";
+  createdAt: string;
+}
+
+export interface DailyLog {
+  id: string;
+  projectId: string;
+  logDate: string;
+  weatherSummary: string;
+  temperature: string;
+  workCompleted: string;
+  workforceCount: number;
+  workforceSummary: string;
+  issues: string;
+  safetyObservations: string;
+  createdAt: string;
+}
+
+export interface Report {
+  id: string;
+  projectId: string;
+  projectName?: string;
+  reportType: "safety" | "crack" | "progress" | "valuation" | "planning" | "weather";
+  title: string;
+  summary: string;
+  reportData: Record<string, any>;
+  generatedBy: string;
+  reviewStatus: "Draft" | "Final" | "Approved" | "Verified";
+  createdAt: string;
+}
+
+export interface DatabaseSchema {
+  projects: Project[];
+  tasks: Task[];
+  inspections: Inspection[];
+  dailyLogs: DailyLog[];
+  reports: Report[];
+}
+
+const DATA_DIR = path.resolve(process.cwd(), "data");
+const DB_FILE = path.join(DATA_DIR, "construction_db.json");
+
+function getInitialData(): DatabaseSchema {
+  const now = new Date().toISOString();
+  
+  return {
+    projects: [
+      {
+        id: "proj-1",
+        name: "Skyline Meridian Commercial Tower",
+        description: "42-story mixed-use commercial office building with 3 levels of subterranean parking, seismic damping systems, and LEED Gold certification targets.",
+        location: "450 North Michigan Ave, Chicago, IL",
+        client: "Meridian Real Estate Holdings",
+        manager: "Marcus Vance, PE",
+        budget: 48500000,
+        startDate: "2025-03-15",
+        targetCompletionDate: "2027-04-30",
+        status: "Active",
+        progress: 68,
+        siteArea: "35,000 sq ft",
+        floors: 42,
+        projectType: "Commercial High-Rise",
+        createdAt: "2025-03-15T08:00:00Z",
+        updatedAt: now,
+      },
+      {
+        id: "proj-2",
+        name: "Harborview Logistics Hub & Cold Storage",
+        description: "220,000 sq ft industrial automated distribution facility featuring sub-zero thermal insulation slabs, heavy vehicle ramps, and high-bay racking systems.",
+        location: "Pier 94 Industrial District, Seattle, WA",
+        client: "Pacific Northwest Freight Systems",
+        manager: "Elena Rostova",
+        budget: 22800000,
+        startDate: "2025-08-01",
+        targetCompletionDate: "2026-12-15",
+        status: "Delayed",
+        progress: 42,
+        siteArea: "220,000 sq ft",
+        floors: 2,
+        projectType: "Industrial Logistics",
+        createdAt: "2025-08-01T08:00:00Z",
+        updatedAt: now,
+      },
+      {
+        id: "proj-3",
+        name: "Crestview Viaduct & Bridge Retrofit",
+        description: "Seismic strengthening, deck resurfacing, bearing replacement, and carbon fiber structural wrapping on twin 680-foot highway spans.",
+        location: "Interstate 80 Interchange, Sacramento, CA",
+        client: "California Dept of Transportation",
+        manager: "David Chen, SE",
+        budget: 16200000,
+        startDate: "2024-11-10",
+        targetCompletionDate: "2026-06-30",
+        status: "Active",
+        progress: 85,
+        siteArea: "Linear 1,360 ft",
+        floors: 1,
+        projectType: "Infrastructure / Bridge",
+        createdAt: "2024-11-10T08:00:00Z",
+        updatedAt: now,
+      }
+    ],
+    tasks: [
+      {
+        id: "task-101",
+        projectId: "proj-1",
+        title: "Level 28 Reinforced Slab Concrete Pour",
+        description: "Post-tensioned slab casting. Verify tendon layout, rebar clearances, and embedment chairs prior to pump operation.",
+        priority: "Critical",
+        status: "In Progress",
+        startDate: "2026-10-25",
+        endDate: "2026-10-28",
+        progress: 60,
+        dependencies: ["Level 28 Formwork Inspection"],
+        assignedTo: "Apex Concrete Subcontractors",
+        phase: "Structural Construction",
+        createdAt: "2026-10-20T08:00:00Z",
+        updatedAt: now,
+      },
+      {
+        id: "task-102",
+        projectId: "proj-1",
+        title: "Perimeter Safety Netting & Toeboard Audit (L25-L27)",
+        description: "Perform daily perimeter drop-hazard sweep. Secure loose debris, inspect clamp tension on safety cable lines.",
+        priority: "High",
+        status: "In Progress",
+        startDate: "2026-10-26",
+        endDate: "2026-10-27",
+        progress: 80,
+        dependencies: [],
+        assignedTo: "Site Safety Division",
+        phase: "Safety Compliance",
+        createdAt: "2026-10-22T08:00:00Z",
+        updatedAt: now,
+      },
+      {
+        id: "task-103",
+        projectId: "proj-1",
+        title: "MEP Rough-in Verification - Floors 18 to 22",
+        description: "Pressure test domestic water risers and inspect fire sprinkler branch conduits before drywall closing.",
+        priority: "Medium",
+        status: "In Progress",
+        startDate: "2026-10-15",
+        endDate: "2026-11-05",
+        progress: 55,
+        dependencies: ["Wall Framing Level 18-22"],
+        assignedTo: "Starlight Mechanical & Electric",
+        phase: "MEP Rough-In",
+        createdAt: "2026-10-10T08:00:00Z",
+        updatedAt: now,
+      },
+      {
+        id: "task-201",
+        projectId: "proj-2",
+        title: "Cold Storage Thermal Slab Vapor Barrier Installation",
+        description: "Extruded polystyrene insulation dual-layer placement and sealed polyolefin vapor retarder inspection.",
+        priority: "High",
+        status: "Under Review",
+        startDate: "2026-10-20",
+        endDate: "2026-10-31",
+        progress: 40,
+        dependencies: ["Subgrade Compaction Approval"],
+        assignedTo: "Arctic Slabs Ltd",
+        phase: "Foundation & Thermal Envelope",
+        createdAt: "2026-10-18T08:00:00Z",
+        updatedAt: now,
+      },
+      {
+        id: "task-301",
+        projectId: "proj-3",
+        title: "Pier 4 Carbon Fiber Reinforced Polymer (CFRP) Curing",
+        description: "Monitor adhesive cure temperatures on bent cap shear wraps. Maintain protective weather enclosure during rain.",
+        priority: "High",
+        status: "Completed",
+        startDate: "2026-10-12",
+        endDate: "2026-10-24",
+        progress: 100,
+        dependencies: ["Pier 4 Surface Sandblasting"],
+        assignedTo: "Titan Infrastructure Solutions",
+        phase: "Seismic Retrofit",
+        createdAt: "2026-10-10T08:00:00Z",
+        updatedAt: now,
+      }
+    ],
+    inspections: [
+      {
+        id: "insp-1",
+        projectId: "proj-1",
+        projectName: "Skyline Meridian Commercial Tower",
+        inspectionType: "safety",
+        severity: "High",
+        reviewStatus: "Action Taken",
+        inputData: {
+          location: "Floor 26 West Edge",
+          inspector: "Marcus Vance",
+          notes: "Routine evening sweep prior to night shift crane hoisting."
+        },
+        findings: {
+          summary: "Potential fall hazard identified: Missing intermediate guardrail wire and loose timber debris near floor edge opening.",
+          hazards: [
+            {
+              category: "Fall Hazard / Edge Protection",
+              severity: "High",
+              description: "Mid-rail wire was found slackened near column B-4; unbolted 4x4 timber boards within 18 inches of unenclosed floor perimeter.",
+              evidence: "Perimeter cable sagged below OSHA 39-45 inch compliance mark; loose debris vulnerable to wind displacement.",
+              recommended_action: "Tension wire rope clips immediately, install 3.5 inch toeboard, clear loose scrap timber to designated bin.",
+              priority: "Immediate",
+              confidence: 0.94
+            }
+          ],
+          limitations: [
+            "Analysis conducted on visible daylight photos. Thermal or night-vision conditions not evaluated."
+          ]
+        },
+        recommendations: [
+          "Install OSHA-compliant yellow mesh toeboards along entire West perimeter.",
+          "Hold 15-minute tool-box safety talk with masonry subcontractor tomorrow at 07:00 AM."
+        ],
+        createdAt: "2026-10-25T14:30:00Z"
+      },
+      {
+        id: "insp-2",
+        projectId: "proj-3",
+        projectName: "Crestview Viaduct & Bridge Retrofit",
+        inspectionType: "crack",
+        severity: "Medium",
+        reviewStatus: "Verified",
+        inputData: {
+          location: "Pier Cap 2 South Elevation",
+          materialType: "Reinforced Concrete (4000 PSI)",
+          structureType: "Bridge Pier Cap",
+          structureAgeYears: 34,
+          scaleReference: "6-inch metal magnetic scale card"
+        },
+        findings: {
+          summary: "Diagonal shear crack identified on concrete cantilever bracket. Width approximately 0.4mm.",
+          classification: "Diagonal Shear Crack",
+          severityCategory: "Medium - Monitor & Epoxy Inject",
+          crackLocations: [
+            {
+              box: [240, 180, 520, 460],
+              label: "Diagonal Shear Line",
+              orientation: "Diagonal (~42 degrees)",
+              estimatedLength: "14.2 inches"
+            }
+          ],
+          observations: "Crack pattern consistent with cyclic dynamic truck loading. No active water seepage or exposed efflorescence detected.",
+          recommendations: [
+            "Install Demec crack monitoring pins to measure dynamic displacement over 30 days.",
+            "Pressure-inject low-viscosity structural epoxy (ASTM C881 Type IV).",
+            "Consult licensed bridge structural engineer for verification against AASHTO LRFD specifications."
+          ],
+          limitations: [
+            "Subsurface delamination cannot be determined from optical photo without ultrasonic pulse testing."
+          ]
+        },
+        recommendations: [
+          "Epoxy injection scheduled for 2026-11-02.",
+          "Structural engineer sign-off obtained."
+        ],
+        createdAt: "2026-10-24T10:15:00Z"
+      }
+    ],
+    dailyLogs: [
+      {
+        id: "log-1",
+        projectId: "proj-1",
+        logDate: "2026-10-26",
+        weatherSummary: "Partly cloudy, 58°F, winds 12 mph NW. Good conditions for hoisting.",
+        temperature: "58°F / 14°C",
+        workCompleted: "Level 27 rebar cage tying complete (100%). Tower crane #2 hoisted 14 bundles of rebar and HVAC ductwork to staging deck 20.",
+        workforceCount: 46,
+        workforceSummary: "18 Ironworkers, 14 Carpenters, 8 Electricians, 4 Plumbers, 2 Safety Officers",
+        issues: "Minor 45-minute delay on concrete batching plant dispatch due to highway congestion.",
+        safetyObservations: "All personnel 100% tied off on exterior decks. Zero incidents recorded.",
+        createdAt: "2026-10-26T17:00:00Z"
+      }
+    ],
+    reports: [
+      {
+        id: "rep-1",
+        projectId: "proj-1",
+        projectName: "Skyline Meridian Commercial Tower",
+        reportType: "safety",
+        title: "Weekly Site Safety & Fall Protection Audit - Level 25-28",
+        summary: "Comprehensive weekly audit evaluating edge protection, PPE compliance, crane hoisting clearances, and electrical panel lockouts.",
+        reportData: {
+          overallScore: 92,
+          criticalDeficiencies: 0,
+          minorCorrections: 3,
+          inspectionCount: 14,
+          auditor: "Marcus Vance, PE"
+        },
+        generatedBy: "Marcus Vance, PE",
+        reviewStatus: "Approved",
+        createdAt: "2026-10-25T16:00:00Z"
+      },
+      {
+        id: "rep-2",
+        projectId: "proj-3",
+        projectName: "Crestview Viaduct & Bridge Retrofit",
+        reportType: "crack",
+        title: "Pier Cap 2 Non-Destructive Optical Crack Assessment",
+        summary: "Multimodal AI crack diagnostics with normalized spatial bounding coordinates and structural epoxy remediation recommendations.",
+        reportData: {
+          crackSeverity: "Medium",
+          crackLengthInches: 14.2,
+          material: "Reinforced Concrete",
+          remedy: "Structural Epoxy Pressure Injection"
+        },
+        generatedBy: "David Chen, SE",
+        reviewStatus: "Verified",
+        createdAt: "2026-10-24T12:00:00Z"
+      }
+    ]
+  };
+}
+
+export function loadDatabase(): DatabaseSchema {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(DB_FILE)) {
+      const initial = getInitialData();
+      fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), "utf-8");
+      return initial;
+    }
+    const raw = fs.readFileSync(DB_FILE, "utf-8");
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error("Error reading database, resetting to initial seed:", err);
+    const initial = getInitialData();
+    saveDatabase(initial);
+    return initial;
+  }
+}
+
+export function saveDatabase(data: DatabaseSchema): void {
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Error saving database:", err);
+  }
+}
+
+export function resetDatabaseToDemo(): DatabaseSchema {
+  const initial = getInitialData();
+  saveDatabase(initial);
+  return initial;
+}
